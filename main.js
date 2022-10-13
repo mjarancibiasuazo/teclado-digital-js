@@ -1,5 +1,5 @@
 
-//DECLARAMOS LETRAS
+//DECLARAMOS LETRAS (ARREGLO TRIDIMENCIONAL)
 const keys = [
     [
         ["1", "!"],//primera fila
@@ -58,30 +58,29 @@ const keys = [
         [".", ":"],
         ["-", "_"],
     ],
-    [
-        ["SPACE", "SPACE"], //última fila
-    ],
-    
+    [["SPACE", "SPACE"]],//última fila
 ];
 
 let mayus = false;//queda activado
 let shift = false;//solo funciona una vez
-
+let current = null;//referencia al input
 renderKeyboard();
 
+//Función que imprime teclado
 function renderKeyboard(){
     //Hacemos referencia al elemento HTML #keyboard (contenedor)
     const keyboardContainer = document.querySelector('#keyboard-container');
     let empty =  `<div class="key-empty"></div>`;//espacios del teclado, no alineado
     
     //map anidados
+    //recorrido por cada fila
     const layers = keys.map((layer) => {
         return layer.map(key => {
             if(key[0] === 'SHIFT'){
-                return `<button class="key key-shift">${key[0]}</button>`;
+                return `<button class="key key-shift ${shift ? 'activated' : ''}">${key[0]}</button>`;
             }
             if(key[0] === "MAYUS"){
-                return `<button class="key key-mayus">${key[0]}</button> `;
+                return `<button class="key key-mayus ${mayus ? 'activated' : ''}">${key[0]}</button> `;
             }
             if(key[0] === "SPACE"){
                 return `<button class="key key-space"></button> `;
@@ -107,9 +106,11 @@ function renderKeyboard(){
     });
 
     //Ordena teclas
-    layers[0].push(empty);
-    layers[1].unshift(empty);
+    //mega arreglo
+    layers[0].push(empty);//agrega un elemento al último
+    layers[1].unshift(empty);//Agrega espacio vacio al inicio
 
+    //htmlLayers es un arreglo de un solo nivel
     const htmlLayers = layers.map((layer) => {
         return layer.join("");
     });
@@ -119,5 +120,37 @@ function renderKeyboard(){
     htmlLayers.forEach((layer) => {
         keyboardContainer.innerHTML += `<div class="layer">${layer}</div>`;
     });
+
+    //vamos a elegir todos lo botones que sean key
+    document.querySelectorAll(".key").forEach((key) => {
+        key.addEventListener("click", (e) => {
+            if(current){ //si hay un input
+                if(key.textContent === 'SHIFT'){
+                    shift = !shift;
+                   
+                }else if(key.textContent === 'MAYUS'){
+                    mayus = !mayus;
+                   
+                }else if(key.textContent === ''){
+                    current.value += " ";
+                }else{
+                    current.value += key.textContent.trim();
+                    if(shift){
+                        shift = false;
+                       
+                }
+            }
+
+            renderKeyboard();
+            current.focus();
+        }
+        });
+    });
 }
+
+document.querySelectorAll("input").forEach((input) => {
+    input.addEventListener("focusin", (e) => { //se activa cuando el input esta seleccionado
+        current = e.target;
+    });
+});
 
