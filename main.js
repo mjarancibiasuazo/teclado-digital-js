@@ -112,16 +112,19 @@ function renderKeyboard(){
 
     //htmlLayers es un arreglo de un solo nivel
     const htmlLayers = layers.map((layer) => {
-        return layer.join("");
+        return layer.join("");//recorre cada layers con los strings
     });
 
     keyboardContainer.innerHTML = "";
 
+    //una capa de string
+    //cada letra tienen su botón
     htmlLayers.forEach((layer) => {
-        keyboardContainer.innerHTML += `<div class="layer">${layer}</div>`;
+        keyboardContainer.innerHTML += `<div class="layer">${layer}</div>`;//nueva capa
     });
 
     //vamos a elegir todos lo botones que sean key
+    //cada tecla es variable key
     document.querySelectorAll(".key").forEach((key) => {
         key.addEventListener("click", (e) => {
             if(current){ //si hay un input
@@ -148,6 +151,7 @@ function renderKeyboard(){
     });
 }
 
+//REFRENCIA AL ELEMENTO INPUT
 document.querySelectorAll("input").forEach((input) => {
     input.addEventListener("focusin", (e) => { //se activa cuando el input esta seleccionado
         current = e.target;
